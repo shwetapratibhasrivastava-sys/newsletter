@@ -3,6 +3,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import connectDb from "./config/db.js"
 import authRoute from "./routes/authRoute.js"
+import newLetterRoute from "./routes/newLetterRoute.js"
 
 
 dotenv.config()
@@ -22,6 +23,7 @@ app.get("/",(req,res)=>{
     res.json("Api is running...")
 })
 app.use("/api/auth",authRoute)
+app.use("/api/newLetter",newLetterRoute)
 
 
 app.listen(PORT,()=>{
