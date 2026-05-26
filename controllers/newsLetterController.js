@@ -3,75 +3,91 @@ import NewsLetter from "../models/newLetterModel.js";
 export const createNewsLetter = async (req, res) => {
   try {
     const { email } = req.body;
+
     if (!email) {
-      return res.json({
+      return res.status(400).json({
         message: "Enter your email",
       });
     }
 
-    const exisitingEmail = await NewsLetter.findOne({ email });
-    if (email) {
-      return res.json({
+    const existingEmail = await NewsLetter.findOne({ email });
+
+    if (existingEmail) { // ✅ FIXED
+      return res.status(400).json({
         message: "You are already subscribed",
       });
     }
 
     const user = await NewsLetter.create({ email });
-    res.json({
-      message: "Thankyou for subscribing...",
+
+    res.status(201).json({
+      message: "Thank you for subscribing...",
       data: user,
     });
   } catch (error) {
-    res.json(error.message);
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
 
 
+export const getNewsLetter = async (req, res) => {
+  try {
+    const users = await NewsLetter.find();
 
-export const getNewsLetter=async(req,res)=>{
-    try {
-        const user=await NewsLetter.find()
-        res.json({
-            message:"Details fetched successfully",
-            data:user
-        })
-    } catch (error) {
-        res.json(error.message);
+    res.status(200).json({
+      message: "Details fetched successfully",
+      data: users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+export const getNewsLetterById = async (req, res) => {
+  try {
+    const user = await NewsLetter.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "This email doesn't exist",
+      });
     }
-}
+
+    res.status(200).json({
+      message: "Details fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 
-export const getNewsLetterById=async(req,res)=>{
-try {
-    const user=await NewsLetter.findById(req.params.id)
-    if(!user){
-        return res.json({
-            message:"This email doesn't exists"
-        })
+
+export const deleteNewsLetter = async (req, res) => {
+  try {
+    const user = await NewsLetter.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "This email doesn't exist",
+      });
     }
-    return res.json({
-         message:"Details fetched successfully",
-            data:user
-    })
-} catch (error) {
-     res.json(error.message);
-}
-}
 
-
-export const deleteNewsLetter=async(req,res)=>{
-    try {
-        const user=await NewsLetter.findByIdAndDelete(req.params.id)
-        if(!user){
-            return res.json({
-                message:"This email doens't exists"
-            })
-        }
-        res.json({
-            message:"Email deleted successfully"
-        })
-    } catch (error) {
-         res.json(error.message);
-    }
-}
+    res.status(200).json({
+      message: "Email deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
