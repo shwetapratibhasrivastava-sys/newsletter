@@ -23,7 +23,7 @@ app.get("/",(req,res)=>{
     res.json("Api is running...")
 })
 app.use("/api/auth",authRoute)
-app.use("/api/newLetter",newLetterRoute)
+app.use("/api/newletter",newLetterRoute)
 
 
 app.listen(PORT,()=>{

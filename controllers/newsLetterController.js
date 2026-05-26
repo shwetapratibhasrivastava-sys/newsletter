@@ -40,6 +40,7 @@ export const getNewsLetter = async (req, res) => {
     res.status(200).json({
       message: "Details fetched successfully",
       data: users,
+      
     });
   } catch (error) {
     res.status(500).json({
