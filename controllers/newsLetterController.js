@@ -10,14 +10,6 @@ export const createNewsLetter = async (req, res) => {
       });
     }
 
-    const existingEmail = await NewsLetter.findOne({ email });
-
-    if (existingEmail) { // ✅ FIXED
-      return res.status(400).json({
-        message: "You are already subscribed",
-      });
-    }
-
     const user = await NewsLetter.create({ email });
 
     res.status(201).json({
@@ -25,6 +17,19 @@ export const createNewsLetter = async (req, res) => {
       data: user,
     });
   } catch (error) {
+    // Handle duplicate key error
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "You are already subscribed",
+      });
+    }
+    // Handle validation errors
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        message: messages.join(", "),
+      });
+    }
     res.status(500).json({
       message: error.message,
     });
